@@ -4,9 +4,9 @@ Update this file after meaningful implementation work.
 
 ## Status
 
-Current phase: Phase 2: Database (Phase 1 Complete)
+Current phase: Phase 3: Authentication (Phase 2 Complete)
 
-Overall completion: 15%
+Overall completion: 30%
 
 ---
 
@@ -36,17 +36,17 @@ Overall completion: 15%
 
 ## Phase 2: Database
 
-- [ ] SQLAlchemy configured
-- [ ] SQLite configured
-- [ ] Alembic configured
-- [ ] organizations model
-- [ ] users model
-- [ ] endpoints model
-- [ ] collectors model
-- [ ] events model
-- [ ] indexes
-- [ ] initial migration
-- [ ] database tests
+- [x] SQLAlchemy configured
+- [x] SQLite configured
+- [x] Alembic configured
+- [x] organizations model
+- [x] users model
+- [x] endpoints model
+- [x] collectors model
+- [x] events model
+- [x] indexes
+- [x] initial migration
+- [x] database tests
 
 ## Phase 3: Authentication
 
@@ -182,21 +182,30 @@ Reason:
 Add implementation notes, problems, and decisions below.
 
 ### Date: 2026-08-17
-### What changed:
+### What changed (Phase 1):
 - Initialized root `.gitignore` and `.env.example`.
 - Created `backend/` scaffolding with FastAPI, Pydantic settings, SQLAlchemy SQLite session, CORS, and health test.
 - Created `frontend/` scaffolding with Next.js 14, TypeScript, and Tailwind CSS.
 - Created `collector/` scaffolding with configuration, client, common event normalizer, and local queue buffering.
 - Created tests and verified passing execution for backend test suite, collector test suite, and Next.js frontend build.
 
+### Date: 2026-08-17
+### What changed (Phase 2):
+- Configured SQLite with SQLAlchemy engine connection listener enforcing foreign keys (`PRAGMA foreign_keys=ON`).
+- Created relational ORM models: `Organization`, `User`, `Endpoint`, `Collector`, `Event` with full schema and indexes.
+- Configured Alembic with batch mode for SQLite schema migrations.
+- Created initial migration `42f833fa7fd6_initial_schema.py` and executed `alembic upgrade head`.
+- Implemented comprehensive database test suite (`backend/tests/test_database.py`) testing CRUD, foreign key enforcement, unique constraints, cascading deletes, and query filters.
+
 ### Tests:
+- `backend/tests/test_database.py` (6 passed)
 - `backend/tests/test_health.py` (2 passed)
 - `collector/tests/test_normalizer_basic.py` (2 passed)
-- `frontend` typecheck and build (`npm run build` static compilation succeeded)
 
 ### Problems:
-- None. Windows npm execution across WSL boundary resolved by configuring native Linux npm in user environment.
+- None.
 
 ### Next task:
-- Phase 2: Database (SQLAlchemy models for organizations, users, endpoints, collectors, events, indexes, Alembic migrations, and database tests).
+- Phase 3: Authentication (User registration, login, password hashing via bcrypt/passlib, JWT token session management, user roles, and organization isolation tests).
+
 
