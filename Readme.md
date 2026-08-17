@@ -1,65 +1,93 @@
 # SOC Log Collector
 
-Project 1 of the SOCUaTrace project family.
+Project 1 of the **SOCUaTrace** project family (**SOC Unified Analysis Trace**).
 
-SOCUaTrace means **SOC Unified Analysis Trace**.
-
-## What this project does
-
-The SOC Log Collector collects selected Windows security events, normalizes them, sends them to a FastAPI server, stores them in SQLite, and displays them in a Next.js dashboard.
+The SOC Log Collector collects selected Windows security events, normalizes them into the standard SOCUaTrace event schema, transmits them securely to a FastAPI server, stores them in SQLite, and displays them in a Next.js dashboard.
 
 ```text
-Windows
-   |
-collector.exe
-   |
-normalized events
-   |
-HTTPS
-   |
-FastAPI
-   |
-SQLite
-   |
-Next.js
+Windows Endpoint
+       |
+  collector.exe (Python / Winevt reader)
+       |
+  Normalized Events + Local JSONL Queue
+       |
+     HTTPS
+       |
+    FastAPI (Auth, Token Hash, Ownership derivation)
+       |
+    SQLite (Indexed Common Event Schema)
+       |
+  Next.js Dashboard (Telemetry, Details, Filters)
 ```
 
-## Documentation
+## Directory Structure
 
-- `AGENTS.md` - instructions for coding agents
-- `PROJECT.md` - project overview and goals
-- `project-spec.md` - detailed technical specification
-- `DATABASE.md` - database schema
-- `API.md` - API contract
-- `SECURITY.md` - security requirements
-- `PROGRESS.md` - implementation checklist
+```text
+soc-log-collector/
+├── backend/            # FastAPI backend (API, SQLAlchemy, Alembic migrations)
+│   ├── app/            # Application core, api routers, models, schemas
+│   ├── tests/          # Pytest suite for backend APIs and services
+│   └── requirements.txt
+├── frontend/           # Next.js TypeScript web application with Tailwind CSS
+│   ├── src/app/        # App router, pages, and components
+│   └── package.json
+├── collector/          # Python Windows event collector
+│   ├── src/            # Event reader, normalizer, local retry queue, HTTP client
+│   ├── tests/          # Tests for collector normalization and queue logic
+│   └── requirements.txt
+├── docs/               # Architecture and project specifications
+│   ├── AGENTS.md       # Guidelines for AI coding agents
+│   ├── PROJECT.md      # High-level architecture & definition of done
+│   ├── project-spec.md # Detailed technical specification
+│   ├── DATABASE.md     # SQLite schema & relations
+│   ├── API.md          # REST API contracts
+│   ├── SECURITY.md     # Threat model and hardening requirements
+│   ├── PROGRESS.md     # Implementation tracking
+│   ├── DEVELOPMENT.md  # Local development guidelines
+│   └── ENVIRONMENT.md  # Environment and runtime setup
+├── .env.example        # Environment variable template
+└── .gitignore
+```
 
-## Development Environment
+## Quick Start (Development)
 
-Recommended:
+### 1. Backend
 
-- Windows
-- WSL2 Ubuntu
-- Git
-- Python
-- Node.js
-- Docker Engine
-- Docker Compose
-- VS Code or Antigravity
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
 
-The central server runs in WSL/Linux.
+Backend API Swagger docs will be available at `http://localhost:8000/docs`.
 
-The Windows collector runs on Windows.
+### 2. Frontend
 
-## Important
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-This is a development project. Do not deploy it to production without a proper security review, secure TLS configuration, secret management, monitoring, backup strategy, and additional testing.
+Dashboard interface will be available at `http://localhost:3000`.
+
+### 3. Collector
+
+```bash
+cd collector
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m collector.src.main
+```
 
 ## Project Family
 
-1. SOC Log Collector
+1. **SOC Log Collector** (Current)
 2. Cybersecurity ML Training & Retraining Pipeline
 3. AI SOC Alert Analyzer
 4. SOCUaTrace
 
-The common event schema is intentionally shared between all projects.
+The common event schema is shared across all projects.
